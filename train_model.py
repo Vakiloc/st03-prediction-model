@@ -8,9 +8,24 @@ from sklearn.metrics import mean_squared_error
 from data_model import PerformanceRecord, PREDICTOR_COLUMNS, TARGET_COLUMN
 
 def load_data(db_path: str, table: str = 'HITLIST_RESPTIME') -> pd.DataFrame:
-    """Load dataset from a SQLite database."""
+    """Load dataset from a SQLite database.
+
+    Only columns that actually exist in the table will be selected. This makes
+    the training script more robust to schema differences across databases.
+    """
     conn = sqlite3.connect(db_path)
-    query = f"SELECT {', '.join(PREDICTOR_COLUMNS + [TARGET_COLUMN])} FROM {table}"
+
+    # Retrieve column names from the table
+    cursor = conn.execute(f"PRAGMA table_info({table})")
+    table_columns = {row[1].upper() for row in cursor.fetchall()}
+
+    # Ensure the target column exists
+    if TARGET_COLUMN.upper() not in table_columns:
+        raise ValueError(f"Target column {TARGET_COLUMN} not found in table {table}")
+
+    selected_predictors = [c for c in PREDICTOR_COLUMNS if c.upper() in table_columns]
+    query_columns = selected_predictors + [TARGET_COLUMN]
+    query = f"SELECT {', '.join(query_columns)} FROM {table}"
     df = pd.read_sql_query(query, conn)
     conn.close()
 
@@ -18,7 +33,8 @@ def load_data(db_path: str, table: str = 'HITLIST_RESPTIME') -> pd.DataFrame:
 
 def train_linear_regression(df: pd.DataFrame) -> LinearRegression:
     """Train a linear regression model for response time prediction."""
-    X = df[PREDICTOR_COLUMNS]
+    feature_columns = [c for c in PREDICTOR_COLUMNS if c in df.columns]
+    X = df[feature_columns]
     y = df[TARGET_COLUMN]
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 

@@ -20,7 +20,8 @@ pip install -r requirements.txt
 ## Running
 
 The training script expects a SQLite database containing the performance
-tables. Assuming the database is called `performance_data.sqlite`, run:
+tables. It automatically selects all predictor columns that exist in the
+database table. Assuming the database is called `performance_data.sqlite`, run:
 
 ```bash
 python train_model.py performance_data.sqlite
