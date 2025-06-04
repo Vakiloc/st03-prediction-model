@@ -21,7 +21,8 @@ pip install -r requirements.txt
 
 The training script expects a SQLite database containing the performance
 tables. It automatically selects all predictor columns that exist in the
-database table. Assuming the database is called `performance_data.sqlite`, run:
+database table and will one-hot encode any categorical columns. Assuming the
+database is called `performance_data.sqlite`, run:
 
 ```bash
 python train_model.py performance_data.sqlite
