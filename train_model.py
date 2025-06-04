@@ -1,6 +1,6 @@
+
 import sqlite3
 import sys
-
 import pandas as pd
 from sklearn.linear_model import LinearRegression
 from sklearn.model_selection import train_test_split
@@ -13,6 +13,7 @@ def load_data(db_path: str, table: str = 'HITLIST_RESPTIME') -> pd.DataFrame:
     query = f"SELECT {', '.join(PREDICTOR_COLUMNS + [TARGET_COLUMN])} FROM {table}"
     df = pd.read_sql_query(query, conn)
     conn.close()
+
     return df
 
 def train_linear_regression(df: pd.DataFrame) -> LinearRegression:

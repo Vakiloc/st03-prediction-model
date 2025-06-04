@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+
 from typing import Optional, List
 
 
@@ -13,6 +14,7 @@ PREDICTOR_COLUMNS: List[str] = [
 ]
 
 TARGET_COLUMN = 'RESPTI'
+
 
 @dataclass
 class PerformanceRecord:
