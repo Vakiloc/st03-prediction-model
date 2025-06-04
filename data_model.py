@@ -27,6 +27,10 @@ class PerformanceRecord:
     ACCOUNT: str
     COUNT: int
     COMMITTI: float
+
+    # Target variable
+    RESPTI: float
+
     DBPROCTI: Optional[float] = None
     READDIRTI: Optional[float] = None
     READSEQTI: Optional[float] = None
@@ -59,6 +63,3 @@ class PerformanceRecord:
     DATA_RECEIVE_TI: Optional[float] = None
     LOGON_TI: Optional[float] = None
     AUTHORIZATION_TI: Optional[float] = None
-
-    # Target variable
-    RESPTI: float
