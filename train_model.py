@@ -32,9 +32,20 @@ def load_data(db_path: str, table: str = 'HITLIST_RESPTIME') -> pd.DataFrame:
     return df
 
 def train_linear_regression(df: pd.DataFrame) -> LinearRegression:
-    """Train a linear regression model for response time prediction."""
+    """Train a linear regression model for response time prediction.
+
+    Any categorical columns (dtype=object) are automatically one-hot encoded
+    before training.
+    """
     feature_columns = [c for c in PREDICTOR_COLUMNS if c in df.columns]
     X = df[feature_columns]
+
+    # Convert categorical columns to numeric representation.  This prevents
+    # "could not convert string to float" errors when the dataset contains
+    # values such as account names.
+    if any(X.dtypes == "object"):
+        X = pd.get_dummies(X, drop_first=True)
+
     y = df[TARGET_COLUMN]
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
